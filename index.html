@@ -1,0 +1,88 @@
+<html>
+  <body>
+    <label for="text-field1">Age</label>
+    <input type="text" id="text-field1" name="text-field" placeholder="Enter age here" onkeyup="previewPDF()">
+    <br>
+    <label for="text-field2">Weight</label>
+    <input type="text" id="text-field2" name="text-field" placeholder="Enter weight here" onkeyup="previewPDF()">
+    <br>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+    <script>
+      function generatePDF() {
+        // Use jsPDF library to create a new PDF document
+        var pdf = new jsPDF();
+
+        // Add a rectangle around the text
+        pdf.rect(10, 60, 180, 10);
+
+        // Add a rectangle around the text
+        pdf.rect(10, 70, 180, 10);
+
+        // Add a rectangle around the text
+        pdf.rect(10, 80, 180, 10);
+
+
+
+        // set font
+        pdf.setFont('times');
+
+        // set font size
+        pdf.setFontSize(40);
+
+        // Add some text to the PDF
+        pdf.text('Paracetamol Medication Dosage', 10, 37);
+
+
+        // set font size
+        pdf.setFontSize(20);
+
+        var age = document.getElementById("text-field1").value;
+        var weight = document.getElementById("text-field2").value;
+        
+        // Add some text to the PDF
+        pdf.text('Age:', 15, 67);
+        pdf.text(age + ' years old', 55, 67);
+
+        // Add some text to the PDF
+        pdf.text('Weight:', 15, 77);
+        pdf.text(weight + ' kg', 55, 77);
+
+        // Add some text to the PDF
+        pdf.text('Dosage:', 15, 87);
+        pdf.text('1-2' + ' pills', 55, 87);
+
+        return pdf;
+      }
+      function previewPDF() {
+        pdf = generatePDF()
+
+        // Get the PDF as a data URI
+        var pdfData = pdf.output('datauristring');
+
+        // Get the iframe element that is displaying the old PDF
+        var iframe = document.getElementById('pdf-iframe');
+
+        if (iframe){
+        }
+        else {
+          // Create a new element to display the PDF
+          var iframe = document.createElement('iframe');
+        }
+
+        // Set the src of the iframe to the data URI
+        iframe.setAttribute('src', pdfData);
+
+        // set the width and height of the iframe
+        iframe.setAttribute('width', '100%');
+        iframe.setAttribute('height', '100%');
+
+
+        // give an id attribute to the iframe
+        iframe.setAttribute('id', 'pdf-iframe');
+
+        // Append the iframe to the body
+        document.body.appendChild(iframe);
+      }
+    </script>
+  </body>
+</html>
