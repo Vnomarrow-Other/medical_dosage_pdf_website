@@ -1,55 +1,371 @@
 <html>
   <body>
+    <label for="text-field0">Name</label>
+    <input type="text" id="text-field0" name="text-field" placeholder="Enter name here" onkeyup="previewPDF()">
+    <br>
     <label for="text-field1">Age</label>
     <input type="text" id="text-field1" name="text-field" placeholder="Enter age here" onkeyup="previewPDF()">
     <br>
     <label for="text-field2">Weight</label>
     <input type="text" id="text-field2" name="text-field" placeholder="Enter weight here" onkeyup="previewPDF()">
     <br>
+    <select id="paracetamol-type">
+        <option value="oral">Paracetamol Oral lösning</option>
+        <option value="melts-in_mouth">Paracetamol Munsönderfallande</option>
+        <option value="tablet">Paracetamol Tablett</option>
+    </select>
+    <br>
+    <select id="ibuprofen-type">
+        <option value="oral">Ibuprofen Oral lösning</option>
+        <option value="supp">Ibuprofen Supp</option>
+        <option value="tablet">Ibuprofen Tablett</option>
+    </select>
+    <br>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
     <script>
+      window.onload = function() {
+        previewPDF();
+      };
+      document.getElementById("paracetamol-type").onchange = function() {
+        previewPDF();
+      };
+      document.getElementById("ibuprofen-type").onchange = function() {
+        previewPDF();
+      };
+
+      function drawText(text, pdf, x, y, width) {
+        var words = text.split(" ");
+        tot_text_width = 0
+        for (let i = 0; i < words.length; i++) {
+            var wordWidth = pdf.getTextWidth(words[i])
+	        tot_text_width += wordWidth
+        }
+        var spacing = (width - tot_text_width) / (words.length)
+        for (let i = 0; i < words.length; i++) {
+            var wordWidth = pdf.getTextWidth(words[i])
+	        pdf.text(words[i], x, y);
+            x = x + wordWidth + spacing;
+        }
+      }
+      function drawXCenteredText(text, pdf, x, width, y) {
+        var textWidth = pdf.getTextWidth(text)
+        x = x + (width - textWidth) / 2
+        pdf.text(text, x, y);
+      }
+      function get_age() {
+        years_age = document.getElementById("text-field1").value;
+        return parseInt(years_age);
+      }
+      function get_weigth() {
+        years_age = document.getElementById("text-field2").value;
+        return parseInt(years_age);
+      }
+      function get_paracetamol_type() {
+        paracetamol_type = document.getElementById("paracetamol-type").value;
+        return paracetamol_type;
+      }
+      function get_nsaid_type() {
+        nasid_type = document.getElementById("ibuprofen-type").value;
+        return nasid_type;
+      }
+
+      function is_valid_parameters() {
+        if(isNaN(get_age())) {
+            return false;
+        }
+        if(isNaN(get_weigth())) {
+            return false;
+        }
+        if(get_age() < 0) {
+            return false;
+        }
+        if(get_weigth() < 0) {
+            return false;
+        }
+        return true;
+      }
+      function get_dosage_per_occation_paracetamol_day_1_3() {
+        paracetamol_type = get_paracetamol_type();
+        age = get_age();
+        weight = get_weigth();
+        number_of_doses = get_number_of_doses_paracetamol_day_1_3();
+        mg_per_occation = 25 * weight;
+        if(mg_per_occation * number_of_doses > 4000) {
+            mg_per_occation = 4000 / number_of_doses;
+        }
+        if (paracetamol_type == "oral") {
+            return Math.floor(0.3 + mg_per_occation / 24) * 24;
+        }
+        if (paracetamol_type == "melts-in_mouth") {
+            return mg_per_occation;
+        }
+        if (paracetamol_type == "tablet") {
+            return mg_per_occation;
+        }
+
+        return NaN;
+      }
+      function get_number_of_doses_paracetamol_day_1_3() {
+        paracetamol_type = get_paracetamol_type();
+        age = get_age();
+        weight = get_weigth();
+        if (paracetamol_type == "oral") {
+            return 1;
+        }
+        if (paracetamol_type == "melts-in_mouth") {
+            return 2;
+        }
+        if (paracetamol_type == "tablet") {
+            return 3;
+        }
+
+        return NaN;
+      }
+      function get_dosage_per_occation_paracetamol_day_4() {
+        paracetamol_type = get_paracetamol_type();
+        age = get_age();
+        weight = get_weigth();
+        number_of_doses = get_number_of_doses_paracetamol_day_4();
+        mg_per_occation = 15 * weight;
+        if(mg_per_occation * number_of_doses > 4000) {
+            mg_per_occation = 4000 / number_of_doses;
+        }
+        if (paracetamol_type == "oral") {
+            return Math.floor(0.3 + mg_per_occation / 24) * 24;
+        }
+        if (paracetamol_type == "melts-in_mouth") {
+            return mg_per_occation;
+        }
+        if (paracetamol_type == "tablet") {
+            return mg_per_occation;
+        }
+
+        return NaN;
+      }
+      function get_number_of_doses_paracetamol_day_4() {
+        paracetamol_type = get_paracetamol_type();
+        age = get_age();
+        weight = get_weigth();
+        if (paracetamol_type == "oral") {
+            return 1;
+        }
+        if (paracetamol_type == "melts-in_mouth") {
+            return 2;
+        }
+        if (paracetamol_type == "tablet") {
+            return 3;
+        }
+
+        return NaN;
+      }
+      function get_dosage_per_occation_NSAID() {
+        nsaid_type = get_nsaid_type();
+        age = get_age();
+        weight = get_weigth();
+        number_of_doses = get_number_of_doses_NSAID();
+        mg_per_occation = 7 * weight;
+        if(mg_per_occation * number_of_doses > 1200) {
+            mg_per_occation = 1200 / number_of_doses;
+        }
+        if (nsaid_type == "oral") {
+            return Math.floor(0.3 + mg_per_occation / 20) * 20;
+        }
+        if (nsaid_type == "supp") {
+            return mg_per_occation;
+        }
+        if (nsaid_type == "tablet") {
+            return mg_per_occation;
+        }
+
+        return NaN;
+      }
+      function get_number_of_doses_NSAID() {
+        nsaid_type = get_nsaid_type();
+        age = get_age();
+        weight = get_weigth();
+        if (nsaid_type == "oral") {
+            return 1;
+        }
+        if (nsaid_type == "supp") {
+            return 2;
+        }
+        if (nsaid_type == "tablet") {
+            return 3;
+        }
+
+        return NaN;
+      }
       function generatePDF() {
         // Use jsPDF library to create a new PDF document
         var pdf = new jsPDF();
 
-        // Add a rectangle around the text
-        pdf.rect(10, 60, 180, 10);
-
-        // Add a rectangle around the text
-        pdf.rect(10, 70, 180, 10);
-
-        // Add a rectangle around the text
-        pdf.rect(10, 80, 180, 10);
-
-
-
         // set font
-        pdf.setFont('times');
-
-        // set font size
-        pdf.setFontSize(40);
-
-        // Add some text to the PDF
-        pdf.text('Paracetamol Medication Dosage', 10, 37);
-
-
-        // set font size
+        pdf.setFont('Helvetica');
         pdf.setFontSize(20);
 
+        if(!is_valid_parameters()) {
+            var text = "Error: Invalid input fields!";
+            pdf.text(text, 10, 20);
+        }
+
+        var textWidth = 150;
+        var pageWidth = pdf.internal.pageSize.width;
+        y = 37;
+
+        var text = "Smärtbehandling för barn efter besök på";
+        pdf.text(text, (pageWidth - textWidth) / 2, y);
+        y += 10
+
+        var text = "barnsjukhus";
+        pdf.text(text, (pageWidth - textWidth) / 2, y);
+        y += 10;
+
+
+        pdf.setFontSize(10);
+        row_distance = 5;
+        var text = "Följande rekommendationer av smärtstillande i hemmet bör följas endast på ordination av";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "läkare i samband med ert besök på akutmottagningen.";
+        pdf.text(text, (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+
+
+        y += 4;
+
+        var text = "På barnakutmottagningen ordinerar vi smärtstillande i form av paracetamol (ex vis Alvedon, ";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "Parmol, eller Panodil) och/eller så kallade NSAID-preparat (Ipren, Ibuprofen, Brufen) i olika";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "beredningsformer (tablett, flytande, stolpiller). Paracetamol och preparat av NSAID-typ kan i";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "många fall kombineras med för optimal smärtlindring. NSAID ska endast ges till barn > 3 månader.";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+
+
+        y += 4;
+
+        var text = "Tidigast 6 timmar efter att barnet fått smärtstillande hos oss kan det få en ny ny dos. Doseringen av";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "läkemedel till barnet baseras på vikt. Dag 1-3 kan en högre dos ges av paracetamol. Härefter";
+        drawText(text, pdf, (pageWidth - textWidth) / 2, y, textWidth)
+        y += row_distance;
+
+        var text = "bör dosen reduceras . Ge då smärtstillande enligt anvisningar på förbackningen.";
+        pdf.text(text, (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+
+        y += 10;
+
+        var name = document.getElementById("text-field0").value;
+        var name_width = pdf.getTextWidth('Namn:  ' + name + '   ')
+        name_width = Math.max(textWidth / 3, name_width)
         var age = document.getElementById("text-field1").value;
         var weight = document.getElementById("text-field2").value;
         
-        // Add some text to the PDF
-        pdf.text('Age:', 15, 67);
-        pdf.text(age + ' years old', 55, 67);
+        pdf.text('Namn:  ' +           name, (pageWidth - textWidth) / 2, y);
+        pdf.text('Ålder:  ' + age +   ' år', (pageWidth - textWidth) / 2 + name_width, y);
+        pdf.text('Vikt:  ' + weight + ' kg', (pageWidth - textWidth) / 2 + name_width + (textWidth - name_width) / 2, y);
+        y += row_distance;
 
-        // Add some text to the PDF
-        pdf.text('Weight:', 15, 77);
-        pdf.text(weight + ' kg', 55, 77);
 
-        // Add some text to the PDF
-        pdf.text('Dosage:', 15, 87);
-        pdf.text('1-2' + ' pills', 55, 87);
+        y += 10;
+
+        pdf.setFontSize(16);
+        pdf.text('Paracetamol', (pageWidth - textWidth) / 2, y);
+        
+
+        y += 10;
+
+        pdf.setFontSize(10);
+        pdf.text('0-2 månader: max 20 mg/kg, högst 3 gånger/dygn.', (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+        pdf.text('>2 mån: max 20 mg/kg, högst 4 gånger/dygn', (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+        pdf.text('Max 4000 mg/dygn oavsett vikt.', (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+        var box_height = 10;
+        pdf.rect((pageWidth - textWidth) / 2, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + textWidth/3, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + 2*textWidth/3, y, textWidth/3, box_height);
+
+        drawXCenteredText("Dos per tillfalle (mg)", pdf, (pageWidth - textWidth) / 2 + textWidth/3, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText("Antal doser/dygn", pdf, (pageWidth - textWidth) / 2 + 2 * textWidth/3, textWidth/3, y + box_height - 1.5);
+
+        y += box_height
+
+        pdf.rect((pageWidth - textWidth) / 2, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + textWidth/3, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + 2*textWidth/3, y, textWidth/3, box_height);
+
+        dosage_per_occation = String(get_dosage_per_occation_paracetamol_day_1_3());
+        number_of_doses = String(get_number_of_doses_paracetamol_day_1_3());
+        drawXCenteredText("Dygn 1-3 (25 mg/kg)", pdf, (pageWidth - textWidth) / 2, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText(dosage_per_occation, pdf, (pageWidth - textWidth) / 2 + textWidth/3, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText(number_of_doses, pdf, (pageWidth - textWidth) / 2 + 2 * textWidth/3, textWidth/3, y + box_height - 1.5);
+
+        y += box_height
+
+        pdf.rect((pageWidth - textWidth) / 2, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + textWidth/3, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + 2*textWidth/3, y, textWidth/3, box_height);
+
+        dosage_per_occation = String(get_dosage_per_occation_paracetamol_day_4());
+        number_of_doses = String(get_number_of_doses_paracetamol_day_4());
+        drawXCenteredText("Från dygn 4 (15 mg/kg)", pdf, (pageWidth - textWidth) / 2, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText(dosage_per_occation, pdf, (pageWidth - textWidth) / 2 + textWidth/3, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText(number_of_doses, pdf, (pageWidth - textWidth) / 2 + 2 * textWidth/3, textWidth/3, y + box_height - 1.5);
+
+        y += box_height
+
+        y += 15;
+        
+        pdf.setFontSize(16);
+        pdf.text('NSAID', (pageWidth - textWidth) / 2, y);
+
+        y += 10;
+
+        pdf.setFontSize(10);
+        pdf.text('>3 månader: max 7 mg/kg, högst 4 gånger/dygn.', (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+        pdf.setFontSize(10);
+        pdf.text('Max 1200 mg/dygn oavsett vikt.', (pageWidth - textWidth) / 2, y);
+        y += row_distance;
+
+
+
+        pdf.rect((pageWidth - textWidth) / 2, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + textWidth/3, y, textWidth/3, box_height);
+
+        drawXCenteredText("Dos per tillfalle (mg)", pdf, (pageWidth - textWidth) / 2, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText("Antal doser/dygn", pdf, (pageWidth - textWidth) / 2 + textWidth/3, textWidth/3, y + box_height - 1.5);
+
+        y += box_height
+
+        pdf.rect((pageWidth - textWidth) / 2, y, textWidth/3, box_height);
+        pdf.rect((pageWidth - textWidth) / 2 + textWidth/3, y, textWidth/3, box_height);
+
+        dosage_per_occation = String(get_dosage_per_occation_NSAID());
+        number_of_doses = String(get_number_of_doses_NSAID());
+        drawXCenteredText(dosage_per_occation, pdf, (pageWidth - textWidth) / 2, textWidth/3, y + box_height - 1.5);
+        drawXCenteredText(number_of_doses, pdf, (pageWidth - textWidth) / 2 + textWidth/3, textWidth/3, y + box_height - 1.5);
 
         return pdf;
       }
